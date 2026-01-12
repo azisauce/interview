@@ -105,29 +105,8 @@ const mockUsers = [
 // API Routes
 
 // GET all users
-app.get('/api/users', (req, res) => {
-    // Simulate database delay
-    setTimeout(() => {
-        res.json({
-            success: true,
-            data: mockUsers,
-            count: mockUsers.length
-        });
-    }, 300);
-});
-
-// Health check endpoint
-app.get('/api/health', (req, res) => {
-    res.json({
-        success: true,
-        message: 'API is running',
-        timestamp: new Date().toISOString()
-    });
-});
 
 // Start server
 app.listen(PORT, () => {
     console.log(`🚀 Express server running on http://localhost:${PORT}`);
-    console.log(`📊 API endpoint: http://localhost:${PORT}/api/users`);
-    console.log(`💚 Health check: http://localhost:${PORT}/api/health`);
 });

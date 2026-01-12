@@ -25,11 +25,6 @@ interview-yassine/
 - CORS enabled for Angular frontend
 - Endpoints:
   - `GET /api/users` - Get all users
-  - `GET /api/users/:id` - Get user by ID
-  - `POST /api/users` - Create new user
-  - `PUT /api/users/:id` - Update user
-  - `DELETE /api/users/:id` - Delete user
-  - `GET /api/health` - Health check
 
 ### Frontend (Angular 19)
 - User Dashboard component with:
@@ -45,7 +40,6 @@ interview-yassine/
 - `UserService` - HTTP service for API communication
 - Type-safe interfaces
 - RxJS observables for async operations
-- Error handling
 
 ## Running the Application
 
@@ -72,11 +66,6 @@ The Angular app will run on `http://localhost:4200`
 curl http://localhost:3000/api/users
 ```
 
-### Get User by ID
-```bash
-curl http://localhost:3000/api/users/1
-```
-
 ### Create User
 ```bash
 curl -X POST http://localhost:3000/api/users \
@@ -89,20 +78,6 @@ curl -X POST http://localhost:3000/api/users \
     "joinDate": "2024-01-01",
     "department": "Engineering"
   }'
-```
-
-### Update User
-```bash
-curl -X PUT http://localhost:3000/api/users/1 \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Updated Name"
-  }'
-```
-
-### Delete User
-```bash
-curl -X DELETE http://localhost:3000/api/users/1
 ```
 
 ## Development Notes
@@ -129,12 +104,3 @@ The application demonstrates the Angular service pattern:
 - **Backend**: Express.js, Node.js
 - **Styling**: CSS with modern gradients and animations
 - **HTTP**: Angular HttpClient, CORS
-
-## Next Steps
-
-1. The user can implement the CRUD operations in the component to use the service methods
-2. Refactor the component into parent-child architecture
-3. Add form validation
-4. Implement proper error handling UI
-5. Add loading states
-6. Connect to a real database instead of mock data

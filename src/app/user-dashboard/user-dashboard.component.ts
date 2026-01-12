@@ -1,7 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { UserService, User } from '../services/user.service';
+
+// User interface
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  status: 'active' | 'inactive';
+  joinDate: Date;
+  department: string;
+}
 
 @Component({
   selector: 'app-user-dashboard',
@@ -11,7 +21,6 @@ import { UserService, User } from '../services/user.service';
   styleUrl: './user-dashboard.component.css'
 })
 export class UserDashboardComponent implements OnInit {
-  constructor(private userService: UserService) { }
   // All users data
   users: User[] = [];
 
@@ -52,27 +61,89 @@ export class UserDashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentUser = this.getEmptyUser();
-    this.loadUsersFromAPI();
+    this.loadMockData();
+    this.applyFiltersAndSort();
+    this.calculateStatistics();
   }
 
-  // Load users from API
-  loadUsersFromAPI(): void {
-    this.userService.getUsers().subscribe({
-      next: (users) => {
-        // Convert joinDate strings to Date objects
-        this.users = users.map(user => ({
-          ...user,
-          joinDate: new Date(user.joinDate)
-        }));
-        this.applyFiltersAndSort();
-        this.calculateStatistics();
+  // Load mock data
+  loadMockData(): void {
+    this.users = [
+      {
+        id: 1,
+        name: 'John Doe',
+        email: 'john.doe@example.com',
+        role: 'Admin',
+        status: 'active',
+        joinDate: new Date('2023-01-15'),
+        department: 'Engineering'
       },
-      error: (error) => {
-        console.error('Error loading users:', error);
-        // Optionally show error message to user
-        alert('Failed to load users from server. Please make sure the backend is running.');
+      {
+        id: 2,
+        name: 'Jane Smith',
+        email: 'jane.smith@example.com',
+        role: 'Developer',
+        status: 'active',
+        joinDate: new Date('2023-03-20'),
+        department: 'Engineering'
+      },
+      {
+        id: 3,
+        name: 'Bob Johnson',
+        email: 'bob.johnson@example.com',
+        role: 'Manager',
+        status: 'active',
+        joinDate: new Date('2022-11-10'),
+        department: 'Marketing'
+      },
+      {
+        id: 4,
+        name: 'Alice Williams',
+        email: 'alice.williams@example.com',
+        role: 'Designer',
+        status: 'inactive',
+        joinDate: new Date('2023-05-05'),
+        department: 'Marketing'
+      },
+      {
+        id: 5,
+        name: 'Charlie Brown',
+        email: 'charlie.brown@example.com',
+        role: 'Analyst',
+        status: 'active',
+        joinDate: new Date('2023-07-12'),
+        department: 'Finance'
+      },
+      {
+        id: 6,
+        name: 'Diana Prince',
+        email: 'diana.prince@example.com',
+        role: 'Developer',
+        status: 'active',
+        joinDate: new Date('2023-02-28'),
+        department: 'Engineering'
+      },
+      {
+        id: 7,
+        name: 'Ethan Hunt',
+        email: 'ethan.hunt@example.com',
+        role: 'Manager',
+        status: 'active',
+        joinDate: new Date('2022-09-15'),
+        department: 'Sales'
+      },
+      {
+        id: 8,
+        name: 'Fiona Green',
+        email: 'fiona.green@example.com',
+        role: 'Developer',
+        status: 'inactive',
+        joinDate: new Date('2023-04-18'),
+        department: 'Engineering'
       }
-    });
+    ];
+    this.applyFiltersAndSort();
+    this.calculateStatistics();
   }
 
   // Apply all filters and sorting
