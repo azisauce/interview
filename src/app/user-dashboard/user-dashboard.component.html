@@ -41,14 +41,6 @@
       </div>
 
       <div class="filter-group">
-        <label for="status">Status:</label>
-        <select id="status" [(ngModel)]="selectedStatus" (ngModelChange)="applyFiltersAndSort()">
-          <option value="all">All Statuses</option>
-          <option *ngFor="let status of statuses" [value]="status">{{ status | titlecase }}</option>
-        </select>
-      </div>
-
-      <div class="filter-group">
         <label for="department">Department:</label>
         <select id="department" [(ngModel)]="selectedDepartment" (ngModelChange)="applyFiltersAndSort()">
           <option value="all">All Departments</option>

@@ -79,28 +79,3 @@ curl -X POST http://localhost:3000/api/users \
     "department": "Engineering"
   }'
 ```
-
-## Development Notes
-
-### Component Refactoring Opportunity
-The `UserDashboardComponent` is intentionally complex and handles multiple responsibilities. It's designed to be refactored into parent-child components using `@Input()` and `@Output()`:
-
-**Potential Child Components:**
-- `UserStatisticsComponent` - Display statistics
-- `UserFiltersComponent` - Handle filtering logic
-- `UserTableComponent` - Display sortable table
-- `UserPaginationComponent` - Manage pagination
-- `UserFormComponent` - Handle add/edit forms
-
-### Service Pattern
-The application demonstrates the Angular service pattern:
-1. **Service Layer** (`UserService`) - Handles HTTP communication
-2. **Component Layer** (`UserDashboardComponent`) - Consumes service and manages UI
-3. **Separation of Concerns** - Business logic in service, presentation in component
-
-## Technologies Used
-
-- **Frontend**: Angular 19, TypeScript, RxJS
-- **Backend**: Express.js, Node.js
-- **Styling**: CSS with modern gradients and animations
-- **HTTP**: Angular HttpClient, CORS

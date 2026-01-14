@@ -36,7 +36,6 @@ export class UserDashboardComponent implements OnInit {
   // Filtering
   searchTerm: string = '';
   selectedRole: string = 'all';
-  selectedStatus: string = 'all';
   selectedDepartment: string = 'all';
 
   // Sorting
@@ -163,11 +162,6 @@ export class UserDashboardComponent implements OnInit {
     // Apply role filter
     if (this.selectedRole !== 'all') {
       filtered = filtered.filter(user => user.role === this.selectedRole);
-    }
-
-    // Apply status filter
-    if (this.selectedStatus !== 'all') {
-      filtered = filtered.filter(user => user.status === this.selectedStatus);
     }
 
     // Apply department filter
@@ -304,7 +298,6 @@ export class UserDashboardComponent implements OnInit {
   resetFilters(): void {
     this.searchTerm = '';
     this.selectedRole = 'all';
-    this.selectedStatus = 'all';
     this.selectedDepartment = 'all';
     this.applyFiltersAndSort();
   }
