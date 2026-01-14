@@ -1,4 +1,4 @@
-# Interview Yassine - Angular 19 + Express.js
+# Interview - Angular 19 + Express.js
 
 This project demonstrates an Angular 19 application with an Express.js backend API.
 
