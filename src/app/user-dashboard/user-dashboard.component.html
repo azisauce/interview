@@ -17,40 +17,14 @@
     </div>
   </div>
 
-  <!-- Filters Section -->
-  <div class="filters-section">
-    <h2>Filters</h2>
-    <div class="filters">
-      <div class="filter-group">
-        <label for="search">Search:</label>
-        <input 
-          id="search"
-          type="text" 
-          [(ngModel)]="searchTerm" 
-          (ngModelChange)="applyFiltersAndSort()"
-          placeholder="Search by name or email..."
-        />
-      </div>
-
-      <div class="filter-group">
-        <label for="role">Role:</label>
-        <select id="role" [(ngModel)]="selectedRole" (ngModelChange)="applyFiltersAndSort()">
-          <option value="all">All Roles</option>
-          <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
-        </select>
-      </div>
-
-      <div class="filter-group">
-        <label for="department">Department:</label>
-        <select id="department" [(ngModel)]="selectedDepartment" (ngModelChange)="applyFiltersAndSort()">
-          <option value="all">All Departments</option>
-          <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
-        </select>
-      </div>
-
-      <button class="btn btn-secondary" (click)="resetFilters()">Reset Filters</button>
-    </div>
-  </div>
+  <!-- Filters Section - Now using dedicated component -->
+  <app-user-filter
+    [roles]="roles"
+    [departments]="departments"
+    [statuses]="statuses"
+    (filterChange)="onFilterChange($event)"
+    (resetFilters)="onResetFilters()"
+  ></app-user-filter>
 
   <!-- Actions Section -->
   <div class="actions-section">
