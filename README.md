@@ -9,6 +9,11 @@ interview-yassine/
 ├── server.js                          # Express.js backend server
 ├── src/
 │   └── app/
+│       ├── components/
+│       │   └── user-filter/           # Reusable filter component
+│       │       ├── user-filter.component.ts
+│       │       ├── user-filter.component.html
+│       │       └── user-filter.component.css
 │       ├── services/
 │       │   └── user.service.ts        # Angular HTTP service
 │       └── user-dashboard/

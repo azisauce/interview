@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { UserFilterComponent, FilterCriteria } from '../components/user-filter/user-filter.component';
 
 // User interface
 interface User {
@@ -16,7 +17,7 @@ interface User {
 @Component({
   selector: 'app-user-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, UserFilterComponent],
   templateUrl: './user-dashboard.component.html',
   styleUrl: './user-dashboard.component.css'
 })
@@ -33,10 +34,13 @@ export class UserDashboardComponent implements OnInit {
   totalPages: number = 1;
   paginatedUsers: User[] = [];
 
-  // Filtering
-  searchTerm: string = '';
-  selectedRole: string = 'all';
-  selectedDepartment: string = 'all';
+  // Filtering - centralized filter criteria
+  filterCriteria: FilterCriteria = {
+    searchTerm: '',
+    selectedRole: 'all',
+    selectedDepartment: 'all',
+    selectedStatus: 'all'
+  };
 
   // Sorting
   sortField: keyof User = 'name';
@@ -151,8 +155,8 @@ export class UserDashboardComponent implements OnInit {
     let filtered = [...this.users];
 
     // Apply search filter
-    if (this.searchTerm) {
-      const term = this.searchTerm.toLowerCase();
+    if (this.filterCriteria.searchTerm) {
+      const term = this.filterCriteria.searchTerm.toLowerCase();
       filtered = filtered.filter(user =>
         user.name.toLowerCase().includes(term) ||
         user.email.toLowerCase().includes(term)
@@ -160,13 +164,18 @@ export class UserDashboardComponent implements OnInit {
     }
 
     // Apply role filter
-    if (this.selectedRole !== 'all') {
-      filtered = filtered.filter(user => user.role === this.selectedRole);
+    if (this.filterCriteria.selectedRole !== 'all') {
+      filtered = filtered.filter(user => user.role === this.filterCriteria.selectedRole);
     }
 
     // Apply department filter
-    if (this.selectedDepartment !== 'all') {
-      filtered = filtered.filter(user => user.department === this.selectedDepartment);
+    if (this.filterCriteria.selectedDepartment !== 'all') {
+      filtered = filtered.filter(user => user.department === this.filterCriteria.selectedDepartment);
+    }
+
+    // Apply status filter
+    if (this.filterCriteria.selectedStatus !== 'all') {
+      filtered = filtered.filter(user => user.status === this.filterCriteria.selectedStatus);
     }
 
     // Apply sorting
@@ -295,10 +304,20 @@ export class UserDashboardComponent implements OnInit {
     };
   }
 
-  resetFilters(): void {
-    this.searchTerm = '';
-    this.selectedRole = 'all';
-    this.selectedDepartment = 'all';
+  // Handle filter changes from child component
+  onFilterChange(criteria: FilterCriteria): void {
+    this.filterCriteria = criteria;
+    this.applyFiltersAndSort();
+  }
+
+  // Handle reset filters event from child component
+  onResetFilters(): void {
+    this.filterCriteria = {
+      searchTerm: '',
+      selectedRole: 'all',
+      selectedDepartment: 'all',
+      selectedStatus: 'all'
+    };
     this.applyFiltersAndSort();
   }
 
