@@ -1,0 +1,16 @@
+<div class="pagination" *ngIf="totalPages > 1">
+  <button class="btn btn-secondary" (click)="previous.emit()" [disabled]="currentPage === 1">
+    Previous
+  </button>
+
+  <div class="page-numbers">
+    <button *ngFor="let page of pageNumbers" class="btn btn-page" [class.active]="page === currentPage"
+      (click)="pageChange.emit(page)">
+      {{ page }}
+    </button>
+  </div>
+
+  <button class="btn btn-secondary" (click)="next.emit()" [disabled]="currentPage === totalPages">
+    Next
+  </button>
+</div>
