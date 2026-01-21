@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
+import { UserDashboardComponent } from './components/UserDashboardComponent/user-dashboard.component';
 
 @Component({
   selector: 'app-root',

@@ -1,71 +1,71 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { UserStatisticsComponent } from '../statistics-panel-component/statistics-panel-component';
+import { UserFiltersComponent, FilterState } from '../user-filters-component/user-filters-component';
+import { UserTableComponent, SortState } from '../user-table-component/user-table-component';
+import { PaginationComponent } from '../pagination-component/pagination-component';
+import { UserFormComponent } from '../user-form-modal-component/user-form-modal-component';
+import { User } from '../../services/user.service';
 
-// User interface
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
-  status: 'active' | 'inactive';
-  joinDate: Date;
-  department: string;
-}
 
 @Component({
   selector: 'app-user-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    UserStatisticsComponent,
+    UserFiltersComponent,
+    UserTableComponent,
+    PaginationComponent,
+    UserFormComponent
+  ],
   templateUrl: './user-dashboard.component.html',
   styleUrl: './user-dashboard.component.css'
 })
 export class UserDashboardComponent implements OnInit {
   // All users data
   users: User[] = [];
-
-  // Filtered and sorted users for display
   displayedUsers: User[] = [];
+  paginatedUsers: User[] = [];
 
   // Pagination
   currentPage: number = 1;
   itemsPerPage: number = 5;
   totalPages: number = 1;
-  paginatedUsers: User[] = [];
 
-  // Filtering
-  searchTerm: string = '';
-  selectedRole: string = 'all';
-  selectedDepartment: string = 'all';
+  // Filter state
+  filterState: FilterState = {
+    searchTerm: '',
+    selectedRole: 'all',
+    selectedDepartment: 'all'
+  };
 
-  // Sorting
-  sortField: keyof User = 'name';
-  sortDirection: 'asc' | 'desc' = 'asc';
+  // Sort state
+  sortState: SortState = {
+    field: 'name',
+    direction: 'asc'
+  };
 
-  // Form for adding/editing users
+  // Form state
   showForm: boolean = false;
   isEditing: boolean = false;
-  currentUser!: User;
+  currentUser: User | null = null;
 
   // Statistics
   totalUsers: number = 0;
   activeUsers: number = 0;
   inactiveUsers: number = 0;
 
-  // Available options for filters
+  // Available options
   roles: string[] = ['Admin', 'Manager', 'Developer', 'Designer', 'Analyst'];
   departments: string[] = ['Engineering', 'Marketing', 'Sales', 'HR', 'Finance'];
-  statuses: string[] = ['active', 'inactive'];
-
 
   ngOnInit(): void {
-    this.currentUser = this.getEmptyUser();
     this.loadMockData();
     this.applyFiltersAndSort();
     this.calculateStatistics();
   }
 
-  // Load mock data
   loadMockData(): void {
     this.users = [
       {
@@ -141,18 +141,28 @@ export class UserDashboardComponent implements OnInit {
         department: 'Engineering'
       }
     ];
-    this.applyFiltersAndSort();
-    this.calculateStatistics();
   }
 
-  // Apply all filters and sorting
+  onFiltersChange(filters: FilterState): void {
+    this.filterState = filters;
+    this.applyFiltersAndSort();
+  }
+
+  onResetFilters(): void {
+    this.filterState = {
+      searchTerm: '',
+      selectedRole: 'all',
+      selectedDepartment: 'all'
+    };
+    this.applyFiltersAndSort();
+  }
+
   applyFiltersAndSort(): void {
-    // Start with all users
     let filtered = [...this.users];
 
     // Apply search filter
-    if (this.searchTerm) {
-      const term = this.searchTerm.toLowerCase();
+    if (this.filterState.searchTerm) {
+      const term = this.filterState.searchTerm.toLowerCase();
       filtered = filtered.filter(user =>
         user.name.toLowerCase().includes(term) ||
         user.email.toLowerCase().includes(term)
@@ -160,41 +170,49 @@ export class UserDashboardComponent implements OnInit {
     }
 
     // Apply role filter
-    if (this.selectedRole !== 'all') {
-      filtered = filtered.filter(user => user.role === this.selectedRole);
+    if (this.filterState.selectedRole !== 'all') {
+      filtered = filtered.filter(user => user.role === this.filterState.selectedRole);
     }
 
     // Apply department filter
-    if (this.selectedDepartment !== 'all') {
-      filtered = filtered.filter(user => user.department === this.selectedDepartment);
+    if (this.filterState.selectedDepartment !== 'all') {
+      filtered = filtered.filter(user => user.department === this.filterState.selectedDepartment);
     }
 
     // Apply sorting
     filtered.sort((a, b) => {
-      const aValue = a[this.sortField];
-      const bValue = b[this.sortField];
+      const aValue = a[this.sortState.field];
+      const bValue = b[this.sortState.field];
 
       let comparison = 0;
       if (aValue > bValue) comparison = 1;
       if (aValue < bValue) comparison = -1;
 
-      return this.sortDirection === 'asc' ? comparison : -comparison;
+      return this.sortState.direction === 'asc' ? comparison : -comparison;
     });
 
     this.displayedUsers = filtered;
     this.totalPages = Math.ceil(this.displayedUsers.length / this.itemsPerPage);
-    this.currentPage = 1; // Reset to first page when filters change
+    this.currentPage = 1;
     this.updatePagination();
   }
 
-  // Update pagination
+  onSort(field: keyof User): void {
+    if (this.sortState.field === field) {
+      this.sortState.direction = this.sortState.direction === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortState.field = field;
+      this.sortState.direction = 'asc';
+    }
+    this.applyFiltersAndSort();
+  }
+
   updatePagination(): void {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
     this.paginatedUsers = this.displayedUsers.slice(startIndex, endIndex);
   }
 
-  // Pagination controls
   goToPage(page: number): void {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
@@ -210,33 +228,15 @@ export class UserDashboardComponent implements OnInit {
     this.goToPage(this.currentPage - 1);
   }
 
-  // Sorting
-  sortBy(field: keyof User): void {
-    if (this.sortField === field) {
-      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
-    } else {
-      this.sortField = field;
-      this.sortDirection = 'asc';
-    }
-    this.applyFiltersAndSort();
-  }
-
-  getSortIcon(field: keyof User): string {
-    if (this.sortField !== field) return '↕️';
-    return this.sortDirection === 'asc' ? '↑' : '↓';
-  }
-
-  // Calculate statistics
   calculateStatistics(): void {
     this.totalUsers = this.users.length;
     this.activeUsers = this.users.filter(u => u.status === 'active').length;
     this.inactiveUsers = this.users.filter(u => u.status === 'inactive').length;
   }
 
-  // CRUD operations
   openAddForm(): void {
     this.isEditing = false;
-    this.currentUser = this.getEmptyUser();
+    this.currentUser = null;
     this.showForm = true;
   }
 
@@ -248,19 +248,19 @@ export class UserDashboardComponent implements OnInit {
 
   closeForm(): void {
     this.showForm = false;
-    this.currentUser = this.getEmptyUser();
+    this.currentUser = null;
   }
 
-  saveUser(): void {
-    if (this.isEditing) {
-      const index = this.users.findIndex(u => u.id === this.currentUser.id);
+  saveUser(user: User): void {
+    if (this.isEditing && user.id) {
+      const index = this.users.findIndex(u => u.id === user.id);
       if (index !== -1) {
-        this.users[index] = { ...this.currentUser };
+        this.users[index] = { ...user };
       }
     } else {
       const newId = Math.max(...this.users.map(u => u.id), 0) + 1;
-      this.currentUser.id = newId;
-      this.users.push({ ...this.currentUser });
+      user.id = newId;
+      this.users.push({ ...user });
     }
 
     this.applyFiltersAndSort();
@@ -277,32 +277,11 @@ export class UserDashboardComponent implements OnInit {
   }
 
   toggleUserStatus(user: User): void {
-    user.status = user.status === 'active' ? 'inactive' : 'active';
-    this.applyFiltersAndSort();
-    this.calculateStatistics();
-  }
-
-  // Helper methods
-  getEmptyUser(): User {
-    return {
-      id: 0,
-      name: '',
-      email: '',
-      role: this.roles[0],
-      status: 'active',
-      joinDate: new Date(),
-      department: this.departments[0]
-    };
-  }
-
-  resetFilters(): void {
-    this.searchTerm = '';
-    this.selectedRole = 'all';
-    this.selectedDepartment = 'all';
-    this.applyFiltersAndSort();
-  }
-
-  getPageNumbers(): number[] {
-    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
+    const foundUser = this.users.find(u => u.id === user.id);
+    if (foundUser) {
+      foundUser.status = foundUser.status === 'active' ? 'inactive' : 'active';
+      this.applyFiltersAndSort();
+      this.calculateStatistics();
+    }
   }
 }

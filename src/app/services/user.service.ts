@@ -33,5 +33,9 @@ export class UserService {
   /**
    * Get all users from the API
    */
-  getUsers() { }
+  getUsers(): Observable<User[]> {
+    return this.http.get<ApiResponse<User[]>>(this.apiUrl).pipe(
+      map(response => response.data)
+    );
+  }
 }

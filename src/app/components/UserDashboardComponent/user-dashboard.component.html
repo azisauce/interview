@@ -1,0 +1,31 @@
+<div class="dashboard-container">
+  <h1>User Dashboard</h1>
+
+  <!-- Statistics Section -->
+  <app-user-statistics [totalUsers]="totalUsers" [activeUsers]="activeUsers" [inactiveUsers]="inactiveUsers">
+  </app-user-statistics>
+
+  <!-- Filters Section -->
+  <app-user-filters [roles]="roles" [departments]="departments" [filters]="filterState"
+    (filtersChange)="onFiltersChange($event)" (reset)="onResetFilters()"></app-user-filters>
+
+  <!-- Actions Section -->
+  <div class="actions-section">
+    <button class="btn btn-primary" (click)="openAddForm()">Add New User</button>
+    <span class="results-count">
+      Showing {{ paginatedUsers.length }} of {{ displayedUsers.length }} users
+    </span>
+  </div>
+
+  <!-- Users Table -->
+  <app-user-table [users]="paginatedUsers" [sortState]="sortState" (sort)="onSort($event)" (edit)="openEditForm($event)"
+    (delete)="deleteUser($event)" (toggleStatus)="toggleUserStatus($event)"></app-user-table>
+
+  <!-- Pagination -->
+  <app-pagination [currentPage]="currentPage" [totalPages]="totalPages" (pageChange)="goToPage($event)"
+    (next)="nextPage()" (previous)="previousPage()"></app-pagination>
+
+  <!-- Add/Edit Form Modal -->
+  <app-user-form [visible]="showForm" [isEditing]="isEditing" [user]="currentUser" [roles]="roles"
+    [departments]="departments" (save)="saveUser($event)" (close)="closeForm()"></app-user-form>
+</div>

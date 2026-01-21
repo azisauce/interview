@@ -1,0 +1,48 @@
+<div class="modal-overlay" *ngIf="visible" (click)="onClose()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <h2>{{ isEditing ? 'Edit User' : 'Add New User' }}</h2>
+
+    <form (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="userName">Name:</label>
+        <input id="userName" type="text" [(ngModel)]="formUser.name" name="name" required />
+      </div>
+
+      <div class="form-group">
+        <label for="userEmail">Email:</label>
+        <input id="userEmail" type="email" [(ngModel)]="formUser.email" name="email" required />
+      </div>
+
+      <div class="form-group">
+        <label for="userRole">Role:</label>
+        <select id="userRole" [(ngModel)]="formUser.role" name="role">
+          <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="userDepartment">Department:</label>
+        <select id="userDepartment" [(ngModel)]="formUser.department" name="department">
+          <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="userStatus">Status:</label>
+        <select id="userStatus" [(ngModel)]="formUser.status" name="status">
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">
+          {{ isEditing ? 'Update' : 'Create' }}
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="onClose()">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
