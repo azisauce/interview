@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { StatisticsComponent } from '../components/statistics/statistics.component';
 
 // User interface
 interface User {
@@ -16,7 +17,7 @@ interface User {
 @Component({
   selector: 'app-user-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, StatisticsComponent],
   templateUrl: './user-dashboard.component.html',
   styleUrl: './user-dashboard.component.css'
 })
@@ -56,6 +57,8 @@ export class UserDashboardComponent implements OnInit {
   roles: string[] = ['Admin', 'Manager', 'Developer', 'Designer', 'Analyst'];
   departments: string[] = ['Engineering', 'Marketing', 'Sales', 'HR', 'Finance'];
   statuses: string[] = ['active', 'inactive'];
+  selectedStatus: 'all' | 'active' | 'inactive' = 'all';
+
 
 
   ngOnInit(): void {
@@ -168,6 +171,10 @@ export class UserDashboardComponent implements OnInit {
     if (this.selectedDepartment !== 'all') {
       filtered = filtered.filter(user => user.department === this.selectedDepartment);
     }
+        // Apply status filter
+   if (this.selectedStatus !== 'all') {
+    filtered = filtered.filter(user => user.status === this.selectedStatus);
+}
 
     // Apply sorting
     filtered.sort((a, b) => {
@@ -185,6 +192,8 @@ export class UserDashboardComponent implements OnInit {
     this.totalPages = Math.ceil(this.displayedUsers.length / this.itemsPerPage);
     this.currentPage = 1; // Reset to first page when filters change
     this.updatePagination();
+
+
   }
 
   // Update pagination
@@ -299,8 +308,15 @@ export class UserDashboardComponent implements OnInit {
     this.searchTerm = '';
     this.selectedRole = 'all';
     this.selectedDepartment = 'all';
+    this.selectedStatus = 'all';   
     this.applyFiltersAndSort();
   }
+
+  onStatusSelected(status: 'all' | 'active' | 'inactive'): void {
+  this.selectedStatus = status;
+  this.applyFiltersAndSort();
+}
+
 
   getPageNumbers(): number[] {
     return Array.from({ length: this.totalPages }, (_, i) => i + 1);
